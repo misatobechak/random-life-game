@@ -663,15 +663,18 @@ function statName(key){
    六、時間推進與年終晉升
    ========================== */
 
+
 function advanceTurn(){
-  if(!actionTaken)return;
+  if(!actionTaken) return;
 
   game.turns++;
-  
-  // 每月生活帶來的輕微消耗。
-  if(Math.random()<0.3)game.health=clamp(game.health-1);
 
-  // 偶爾得到額外的善意或遇到小挫折。
+  // 每月生活帶來的輕微消耗
+  if(Math.random()<0.3){
+    game.health=clamp(game.health-1);
+  }
+
+  // 偶爾發生的小事
   if(Math.random()<0.20){
     const bonus=rand([
       {text:"宮人對你的辦事能力有所稱許。",key:"reputation",value:2},
@@ -680,22 +683,26 @@ function advanceTurn(){
       {text:"你從旁人的談話中學到一些門道。",key:"scheme",value:2},
       {text:"皇帝偶然想起你的名字。",key:"favor",value:2}
     ]);
+
     game[bonus.key]=clamp(game[bonus.key]+bonus.value);
     addLog("偶發小事",bonus.text);
   }
 
+  // 每年十二月進行年終考核
   if(game.month===12){
-  game.age++;
-  annualReview();
-  if(!game.alive)return;
-}
+    game.age++;
+    annualReview();
+
+    if(!game.alive) return;
   }
 
+  // 健康歸零，人生結束
   if(game.health<=0){
     endGame("health");
     return;
   }
 
+  // 已成為皇后後，仍可能迎來人生結局
   if(game.rank===7 && game.year>=3){
     if(Math.random()<0.10){
       endGame("empress");
@@ -703,11 +710,13 @@ function advanceTurn(){
     }
   }
 
+  // 年齡或年數達到上限
   if(game.year>=40 || game.age>=65){
     endGame("oldAge");
     return;
   }
 
+  // 推進至下一個月
   if(game.month===12){
     game.month=1;
     game.year++;
