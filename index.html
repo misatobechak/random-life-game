@@ -81,7 +81,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 #stats .bar{height:4px;margin-top:4px}
 #stats .stat-number span{font-size:10px!important}
 #game > .card:first-child{padding:14px 16px}
-.identity-layout{display:grid;grid-template-columns:minmax(230px,.78fr) minmax(0,1.22fr);gap:16px;align-items:center;margin-top:8px}
+.identity-layout{display:grid;grid-template-columns:minmax(190px,.78fr) minmax(0,1.22fr);gap:14px;align-items:center;margin-top:8px}
 #game > .card:first-child .profile{margin-top:0!important;gap:11px;min-width:0}
 .profile-copy{min-width:0;overflow-wrap:anywhere}
 .stats-panel{min-width:0;border-left:1px solid var(--line);padding-left:15px}
@@ -96,12 +96,8 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .stat-number{font-size:20px;font-weight:bold;color:var(--red)}
 .bar{height:5px;background:#e9dfd2;border-radius:10px;overflow:hidden;margin-top:6px}
 .fill{height:100%;background:var(--gold);transition:width .25s}
-.profile{display:flex;align-items:center;gap:15px}
-.avatar{
-  flex:0 0 72px;width:72px;height:82px;border-radius:50% 50% 43% 43%;
-  display:grid;place-items:center;background:#f1e0cc;font-size:43px;
-  border:2px solid #dfc398;
-}
+.profile{display:flex;align-items:center;gap:10px}
+.avatar{display:none!important}
 .profile h2{margin:0;font-size:23px}
 .profile p{margin:2px 0}
 .two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
@@ -126,14 +122,25 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
   main{margin:13px auto;padding:0 10px 25px}
   .card{padding:15px;border-radius:13px}
   .two-col{grid-template-columns:1fr}
-  .identity-layout{grid-template-columns:minmax(0,1fr);gap:10px}
-  .stats-panel{border-left:0;border-top:1px solid var(--line);padding:10px 0 0}
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-  #stats .stat{padding:6px 7px}
-  #stats .stat-head{font-size:10px}
-  #stats .stat-number{font-size:16px}
-  .profile{align-items:flex-start}
-  .avatar{flex-basis:58px;width:58px;height:68px;font-size:34px}
+  /* 手機版：人物資料與精簡屬性並排，人物區不顯示圖片 */
+  #game > .card:first-child{padding:11px 10px}
+  .identity-layout{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:9px;align-items:start;margin-top:9px}
+  #game > .card:first-child .profile{display:block;min-width:0}
+  .profile-copy{min-width:0}
+  .profile h2{font-size:18px;line-height:1.4;overflow-wrap:anywhere}
+  .profile p{font-size:11px;line-height:1.5;margin:5px 0}
+  .profile p strong{font-size:12px}
+  .stats-panel{border-left:1px solid var(--line);border-top:0;padding:0 0 0 8px;min-width:0}
+  .stats-panel .header-row{display:block;margin-bottom:5px}
+  .stats-panel h3{font-size:13px}
+  .stats-panel #goalText{display:block;text-align:left;font-size:9px;line-height:1.3;margin-top:2px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  #stats .stat{padding:4px 5px;border-radius:7px;min-width:0}
+  #stats .stat-head{font-size:9px;line-height:1.25;display:block;overflow-wrap:anywhere}
+  #stats .stat-number{font-size:13px;line-height:1.25;white-space:nowrap}
+  #stats .stat-number span{font-size:8px!important}
+  #stats .bar{height:3px;margin-top:3px}
+  .avatar{display:none!important}
   .top{padding:18px 12px 16px}
   .top h1{letter-spacing:3px}
   #game{padding-bottom:170px}
