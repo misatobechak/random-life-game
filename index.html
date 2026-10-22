@@ -81,8 +81,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
 #stats .bar{height:4px;margin-top:4px}
 #stats .stat-number span{font-size:10px!important}
 #game > .card:first-child{padding:14px 16px}
-#game > .card:first-child .profile{margin-top:9px!important;gap:11px}
-#game > .card:first-child hr{margin:10px 0}
+.identity-layout{display:grid;grid-template-columns:minmax(230px,.78fr) minmax(0,1.22fr);gap:16px;align-items:center;margin-top:8px}
+#game > .card:first-child .profile{margin-top:0!important;gap:11px;min-width:0}
+.profile-copy{min-width:0;overflow-wrap:anywhere}
+.stats-panel{min-width:0;border-left:1px solid var(--line);padding-left:15px}
+.stats-panel .header-row{margin-bottom:7px;align-items:flex-start}
+.stats-panel h3{font-size:14px;margin:0}
+.stats-panel #goalText{font-size:10px;text-align:right}
+#stats .stat{padding:5px 6px}
+#stats .stat-number{font-size:15px}
+#stats .stat-head{font-size:10px}
+#stats .bar{height:3px;margin-top:3px}
 .stat-head{display:flex;justify-content:space-between;gap:5px;font-size:12px;color:var(--muted)}
 .stat-number{font-size:20px;font-weight:bold;color:var(--red)}
 .bar{height:5px;background:#e9dfd2;border-radius:10px;overflow:hidden;margin-top:6px}
@@ -115,6 +124,8 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
   main{margin:13px auto;padding:0 10px 25px}
   .card{padding:15px;border-radius:13px}
   .two-col{grid-template-columns:1fr}
+  .identity-layout{grid-template-columns:minmax(0,1fr);gap:10px}
+  .stats-panel{border-left:0;border-top:1px solid var(--line);padding:10px 0 0}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   #stats .stat{padding:6px 7px}
   #stats .stat-head{font-size:10px}
@@ -157,21 +168,24 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
         <span class="pill" id="dateTag">雍正元年正月</span>
         <span class="muted" id="turnTag">第 1 回合</span>
       </div>
-      <div class="profile" style="margin-top:15px">
-        <div class="avatar" id="avatar">👘</div>
-        <div>
-          <h2 id="playerName">你的名字</h2>
-          <p><strong id="rankName">答應</strong>　<span class="muted" id="ageText">年齡 16 歲</span></p>
-          <p class="muted" id="originText">出身與旗籍</p>
-          <p class="muted" id="personalityText">性格</p>
+      <div class="identity-layout">
+        <div class="profile" style="margin-top:8px">
+          <div class="avatar" id="avatar">👘</div>
+          <div class="profile-copy">
+            <h2 id="playerName">你的名字</h2>
+            <p><strong id="rankName">答應</strong>　<span class="muted" id="ageText">年齡 16 歲</span></p>
+            <p class="muted" id="originText">出身與旗籍</p>
+            <p class="muted" id="personalityText">性格</p>
+          </div>
+        </div>
+        <div class="stats-panel">
+          <div class="header-row">
+            <h3>宮中局勢</h3>
+            <span class="muted" id="goalText">目標：爭取后位</span>
+          </div>
+          <div class="grid" id="stats"></div>
         </div>
       </div>
-      <hr>
-      <div class="header-row">
-        <h3>宮中局勢</h3>
-        <span class="muted" id="goalText">目標：爭取后位</span>
-      </div>
-      <div class="grid" id="stats"></div>
     </div>
 
     <div class="two-col">
@@ -646,6 +660,47 @@ function createEvent(){
     event=rand(eligible);
   }
 
+  // 隨機人生事件：在一般事件之間穿插，並依角色狀態解鎖後續人生轉折。
+  if(event.type!=="主線劇情" && !event.annual && Math.random()<0.24){
+    const lifeEvents=[];
+    if(!game.storyFlags.pregnant && game.age<42 && game.favor>=25){
+      lifeEvents.push({type:"人生變故",icon:"🌸",title:"太醫的喜訊",text:"近來你時常倦怠，太醫診脈後，低聲道出一個可能改變你一生的消息。這份喜訊也可能招來旁人的目光。",choices:[
+        {title:"謹慎調養，暫不張揚",desc:"保護自己，也避免過早成為焦點",effect:{health:7,favor:3,suspicion:-1},flag:"pregnant"},
+        {title:"向皇帝報喜",desc:"爭取關注，但消息很快會傳開",effect:{favor:8,reputation:3,suspicion:5},flag:"pregnant"},
+        {title:"請可信的宮人守口如瓶",desc:"先穩住身邊的人，再作打算",effect:{scheme:4,relationships:3,suspicion:1},flag:"pregnant"}
+      ]});
+    }
+    if(game.storyFlags.pregnant && !game.storyFlags.childbirth){
+      lifeEvents.push({type:"人生變故",icon:"🍼",title:"臨盆之日",text:"數月調養後，你終於迎來臨盆之日。宮中上下都在等待消息，而孩子的平安與否，牽動著你往後的命運。",choices:[
+        {title:"全心聽從太醫安排",desc:"以平安為先，穩妥度過難關",effect:{health:10,reputation:4,relationships:3},flag:"childbirth"},
+        {title:"請皇后派可靠嬤嬤照料",desc:"獲得照應，也加深與皇后的關係",effect:{health:6,empressRelation:7,allies:1},flag:"childbirth"},
+        {title:"不讓對手得知自己的虛弱",desc:"強撐精神，可能留下疲憊",effect:{scheme:5,favor:4,health:-5},flag:"childbirth"}
+      ]});
+    }
+    if(!game.storyFlags.familyInquiry && game.familyPower>=45){
+      lifeEvents.push({type:"人生變故",icon:"📜",title:"家族來信：風聲漸緊",text:"家中送來一封措辭謹慎的信，暗示有族人捲入官場風波。家族的聲勢能成為你的依靠，也可能讓你被宮中盯上。",choices:[
+        {title:"動用家族人脈打聽消息",desc:"盡快掌握實情，但會消耗家族資源",effect:{familyPower:-4,scheme:6,evidence:1},flag:"familyInquiry"},
+        {title:"請皇后代為留意",desc:"借助宮中規矩處理，換取信任",effect:{empressRelation:5,reputation:3,suspicion:2},flag:"familyInquiry"},
+        {title:"暫不回信，避免牽連",desc:"降低眼前風險，卻可能錯過時機",effect:{health:2,suspicion:-3},flag:"familyInquiry"}
+      ]});
+    }
+    if(!game.storyFlags.emperorIllness && game.year>=2){
+      lifeEvents.push({type:"人生變故",icon:"🏮",title:"皇帝病中，六宮不安",text:"皇帝忽然抱恙，召見與賞賜都比往日少了。各宮開始揣測風向，你要決定如何度過這段人人自危的日子。",choices:[
+        {title:"恭謹祈福，安守本分",desc:"表現穩妥，減少惹人注意",effect:{reputation:5,emperorRelation:3,suspicion:-2},flag:"emperorIllness"},
+        {title:"探望並親手準備湯藥",desc:"可能得到記掛，也可能被視為邀寵",effect:{favor:7,health:-3,suspicion:4},flag:"emperorIllness"},
+        {title:"趁機與其他嬪妃互通消息",desc:"建立互助，也可能聽到真假難辨的傳言",effect:{relationships:6,allies:1,scheme:3},flag:"emperorIllness"}
+      ]});
+    }
+    if(!game.storyFlags.betrayal && game.allies>0){
+      lifeEvents.push({type:"人生變故",icon:"🪭",title:"信任的代價",text:"你曾經幫助過的一名宮人，竟被發現私下向另一宮傳話。她究竟是受人脅迫，還是早已另有所圖？",choices:[
+        {title:"私下給她一次解釋機會",desc:"保留人情，承擔被蒙騙的風險",effect:{relationships:4,scheme:3,suspicion:2},flag:"betrayal"},
+        {title:"交由主管宮人查問",desc:"以規矩處理，可能失去一名舊識",effect:{reputation:4,relationships:-3,evidence:1},flag:"betrayal"},
+        {title:"將計就計，放出假消息",desc:"試探背後之人，行事風險較高",effect:{scheme:7,suspicion:4,rivalRelation:-3},flag:"betrayal"}
+      ]});
+    }
+    if(lifeEvents.length) event=rand(lifeEvents);
+  }
+
   currentEvent=event;
   eventSequence++;
 
@@ -736,7 +791,7 @@ function statName(key){
     health:"健康",favor:"寵愛",reputation:"聲望",scheme:"心計",
     relationships:"人脈",familyPower:"家族勢力",
     emperorRelation:"皇帝關係",empressRelation:"皇后關係",
-    rivalRelation:"對手關係",wealth:"家族資源"
+    rivalRelation:"對手關係",wealth:"家族資源",familyPower:"家族勢力",evidence:"線索",allies:"盟友",suspicion:"疑心值"
   };
   return names[key]||key;
 }
