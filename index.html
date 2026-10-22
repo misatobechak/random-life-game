@@ -317,6 +317,11 @@ function startGame(){
     emperorRelation:roll(20,40),
     empressRelation:roll(35,60),
     rivalRelation:roll(35,60),
+    suspicion:roll(5,18),
+    evidence:0,
+    allies:0,
+    secrets:0,
+    storyFlags:{},
     alive:true,
     history:[],
     yearlyPromotions:0,
@@ -366,13 +371,16 @@ function renderAll(){
     ["🪞","宮廷聲望","reputation"],
     ["🧠","心計","scheme"],
     ["🤝","人脈關係","relationships"],
-    ["🏯","家族勢力","familyPower"]
+    ["🏯","家族勢力","familyPower"],
+    ["🕯️","疑心值","suspicion"],
+    ["🗝️","線索","evidence"],
+    ["🌿","盟友","allies"]
   ];
   document.getElementById("stats").innerHTML=stats.map(([icon,label,key])=>`
     <div class="stat">
       <div class="stat-head"><span>${icon} ${label}</span></div>
-      <div class="stat-number">${game[key]}<span style="font-size:11px;font-weight:normal"> / 100</span></div>
-      <div class="bar"><div class="fill" style="width:${game[key]}%"></div></div>
+      <div class="stat-number">${game[key]}${["evidence","allies"].includes(key) ? "<span style='font-size:11px;font-weight:normal'> 條／位</span>" : '<span style="font-size:11px;font-weight:normal"> / 100</span>'}</div>
+      ${["evidence","allies"].includes(key) ? "" : `<div class="bar"><div class="fill" style="width:${game[key]}%"></div></div>`}
     </div>
   `).join("");
 
@@ -555,7 +563,53 @@ function createEvent(){
   const annual=game.month===12;
   const specialChance=Math.random();
 
-  if(annual){
+  // 劇情線：可因玩家選擇而解鎖的連續事件
+  const plotEvents = [
+    {
+      id:"missing_token", condition:()=>game.year>=1 && game.turns>=2 && !game.storyFlags.missingToken,
+      event:{type:"主線劇情",icon:"🔎",title:"失蹤的玉佩",
+        text:"你宮中的一枚玉佩突然不翼而飛，偏偏當晚有人看見一名宮女在附近徘徊。這可能只是小事，也可能有人刻意試探你。",
+        choices:[
+          {title:"私下詢問宮女",desc:"以耐心換取口供",effect:{evidence:1,relationships:3,suspicion:-2},flag:"missingToken"},
+          {title:"立即稟報主管太監",desc:"按規矩處理，但消息可能傳開",effect:{reputation:4,suspicion:2},flag:"missingToken"},
+          {title:"暗中搜查自己的宮室",desc:"不驚動旁人，尋找蛛絲馬跡",effect:{scheme:5,health:-2,evidence:1},flag:"missingToken"}
+        ]}
+    },
+    {
+      id:"letter", condition:()=>game.storyFlags.missingToken && !game.storyFlags.secretLetter,
+      event:{type:"主線劇情",icon:"✉️",title:"藏在炭盆旁的密信",
+        text:"整理宮室時，你在炭盆旁發現半張未燒盡的信紙，上面提到某位高位嬪妃與內務府往來密切。你手中的線索還不足以定論。",
+        choices:[
+          {title:"保存信紙，繼續查證",desc:"累積證據，避免冤枉他人",effect:{evidence:2,scheme:4},flag:"secretLetter"},
+          {title:"將信紙交給皇后",desc:"換取信任，但也暴露線索",effect:{empressRelation:8,reputation:3,suspicion:2},flag:"secretLetter"},
+          {title:"燒掉信紙，置身事外",desc:"保全自己，放棄追查",effect:{health:3,suspicion:-4},flag:"secretLetter"}
+        ]}
+    },
+    {
+      id:"hearing", condition:()=>game.storyFlags.secretLetter && !game.storyFlags.hearing,
+      event:{type:"主線劇情",icon:"⚖️",title:"御前問話",
+        text:"流言終究傳到了御前。皇帝命人查問此事，你被召去說明當日所見。此刻，證據、人脈與聲望都可能左右結果。",
+        choices:[
+          {title:"據實陳述，呈上線索",desc:"若證據充足，可能立功；否則仍有風險",effect:{reputation:game.evidence>=2?10:3,favor:game.evidence>=2?6:0,suspicion:game.evidence>=2?-5:4},flag:"hearing"},
+          {title:"只說親眼所見，不作推測",desc:"謹慎自保，避免牽連",effect:{reputation:5,scheme:3,suspicion:-2},flag:"hearing"},
+          {title:"請可信盟友代為作證",desc:"盟友越多，越有機會得到支持",effect:{relationships:game.allies>0?6:1,empressRelation:game.allies>0?4:0,suspicion:game.allies>0?-3:3},flag:"hearing"}
+        ]}
+    },
+    {
+      id:"aftermath", condition:()=>game.storyFlags.hearing && !game.storyFlags.aftermath,
+      event:{type:"主線劇情",icon:"🌘",title:"風波之後",
+        text:"調查告一段落，各宮對你的看法悄然改變。你可以趁勢建立人脈，也可以收斂鋒芒，讓這場風波慢慢過去。",
+        choices:[
+          {title:"照顧受牽連的宮人",desc:"累積人情與盟友",effect:{relationships:7,allies:1,reputation:3},flag:"aftermath"},
+          {title:"將功勞歸於皇后",desc:"鞏固上位者的信任",effect:{empressRelation:8,reputation:4,allies:1},flag:"aftermath"},
+          {title:"不再追問，低調行事",desc:"降低疑心，保存實力",effect:{suspicion:-6,health:3},flag:"aftermath"}
+        ]}
+    }
+  ];
+  const nextPlot = plotEvents.find(p=>p.condition());
+  if(nextPlot && !annual && specialChance < 0.72){
+    event=nextPlot.event;
+  }else if(annual){
     event={
       type:"年終",icon:"🏮",title:"年終宮宴與考核",
       text:"歲末宮宴將至，皇帝與皇后會留意各宮一年的表現。你的聲望、恩寵、人脈與家族勢力，都可能影響來年的處境。",
@@ -617,8 +671,20 @@ function chooseEvent(index){
 
   for(const [key,value] of Object.entries(effects)){
     if(Object.prototype.hasOwnProperty.call(game,key)){
-      game[key]=clamp(game[key]+value);
+      if(["evidence","allies","secrets"].includes(key)){
+        game[key]=Math.max(0,Math.min(99,game[key]+value));
+      }else{
+        game[key]=clamp(game[key]+value);
+      }
     }
+  }
+  if(choice.flag) game.storyFlags[choice.flag]=true;
+  // 高疑心會令宮中流言更容易發酵；低疑心則較容易獲得信任。
+  if(game.suspicion>=65 && Math.random()<0.25){
+    game.reputation=clamp(game.reputation-3);
+    addLog("疑雲漸起","你的行事引起旁人疑慮，聲望 -3。");
+  }else if(game.suspicion<=15 && Math.random()<0.18){
+    game.relationships=clamp(game.relationships+2);
   }
 
   // 屬性帶來小幅度的隨機結果，增加重玩變化。
@@ -665,16 +731,12 @@ function statName(key){
 
 
 function advanceTurn(){
-  if(!actionTaken) return;
+  if(!actionTaken || !game.alive) return;
 
   game.turns++;
 
-  // 每月生活帶來的輕微消耗
-  if(Math.random()<0.3){
-    game.health=clamp(game.health-1);
-  }
-
-  // 偶爾發生的小事
+  // 每月生活消耗與偶發小事
+  if(Math.random()<0.30) game.health=clamp(game.health-1);
   if(Math.random()<0.20){
     const bonus=rand([
       {text:"宮人對你的辦事能力有所稱許。",key:"reputation",value:2},
@@ -683,46 +745,26 @@ function advanceTurn(){
       {text:"你從旁人的談話中學到一些門道。",key:"scheme",value:2},
       {text:"皇帝偶然想起你的名字。",key:"favor",value:2}
     ]);
-
     game[bonus.key]=clamp(game[bonus.key]+bonus.value);
     addLog("偶發小事",bonus.text);
   }
 
-  // 每年十二月進行年終考核
   if(game.month===12){
     game.age++;
     annualReview();
-
     if(!game.alive) return;
   }
 
-  // 健康歸零，人生結束
-  if(game.health<=0){
-    endGame("health");
-    return;
-  }
+  if(game.health<=0){ endGame("health"); return; }
 
-  // 已成為皇后後，仍可能迎來人生結局
-  if(game.rank===7 && game.year>=3){
-    if(Math.random()<0.10){
-      endGame("empress");
-      return;
-    }
+  // 登后之後仍可能面對權力鬥爭；結局由條件和機率共同決定。
+  if(game.rank===7 && game.year>=3 && Math.random()<0.10){
+    endGame("empress"); return;
   }
+  if(game.year>=40 || game.age>=65){ endGame("oldAge"); return; }
 
-  // 年齡或年數達到上限
-  if(game.year>=40 || game.age>=65){
-    endGame("oldAge");
-    return;
-  }
-
-  // 推進至下一個月
-  if(game.month===12){
-    game.month=1;
-    game.year++;
-  }else{
-    game.month++;
-  }
+  if(game.month===12){ game.month=1; game.year++; }
+  else { game.month++; }
 
   renderAll();
   createEvent();
@@ -767,7 +809,11 @@ function annualReview(){
     addLog("后位之爭","你已位居高位，但距離后位仍有一段路。你需要更穩固的聲望、寵愛與人脈。");
   }
 
-  // 宮廷關係會隨年月稍有變化。
+  // 宮廷關係會隨年月稍有變化；疑心高時更容易招來非議。
+  if(game.suspicion>=70){
+    game.reputation=clamp(game.reputation-4);
+    addLog("流言纏身","疑心值過高，你的行事被過度解讀，聲望 -4。");
+  }
   game.empressRelation=clamp(game.empressRelation+roll(-3,2));
   game.rivalRelation=clamp(game.rivalRelation+roll(-3,2));
 
@@ -818,6 +864,9 @@ function endGame(reason){
     ["宮廷聲望",game.reputation+"/100"],
     ["心計",game.scheme+"/100"],
     ["家族勢力",game.familyPower+"/100"],
+    ["疑心值",game.suspicion+"/100"],
+    ["查得線索",game.evidence+" 條"],
+    ["結交盟友",game.allies+" 位"],
     ["晉升次數",game.yearlyPromotions+" 次"],
     ["經歷回合",game.turns+" 個月"]
   ];
