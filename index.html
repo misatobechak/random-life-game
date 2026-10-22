@@ -1,0 +1,835 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#6e1f2b">
+<title>深宮浮生錄｜雍正朝後宮生存記</title>
+<style>
+:root {
+  --red:#782b38;
+  --red2:#9b4650;
+  --gold:#bd9858;
+  --paper:#fbf5eb;
+  --card:#fffdf9;
+  --ink:#352a29;
+  --muted:#8a7b74;
+  --line:#eadcc9;
+  --green:#547a60;
+  --shadow:0 8px 28px #4c2a1b0b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Serif TC","PMingLiU","Microsoft JhengHei",serif;
+  line-height:1.75;
+}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.top{
+  background:linear-gradient(135deg,#501a28,#842f3b 65%,#a65b50);
+  color:#fff4dc;text-align:center;padding:32px 16px 28px;
+  border-bottom:4px solid var(--gold);
+}
+.seal{
+  display:inline-block;border:1px solid #d8b875;color:#f1d69c;
+  padding:3px 12px;font-size:12px;letter-spacing:3px;
+}
+.top h1{font-size:clamp(30px,6vw,45px);letter-spacing:5px;margin:10px 0 2px}
+.top p{margin:0;color:#f0d9c8;font-size:13px}
+main{max-width:900px;margin:22px auto;padding:0 14px 40px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:17px;
+  padding:20px;margin-bottom:15px;box-shadow:var(--shadow);
+}
+.center{text-align:center}
+.hidden{display:none!important}
+h2{font-size:21px;color:var(--red);margin:0 0 10px}
+h3{font-size:16px;margin:0 0 8px;color:var(--red)}
+p{margin:7px 0}
+.muted{font-size:13px;color:var(--muted)}
+.gold{color:var(--gold)}
+.hero-emoji{font-size:58px;line-height:1.4}
+.primary,.secondary,.choice{
+  width:100%;border-radius:11px;padding:12px 15px;
+  transition:background .15s,transform .15s;
+}
+.primary{background:var(--red);color:#fff8ed;border:1px solid var(--red)}
+.primary:hover{background:#5e1d2b}
+.secondary{background:#fffaf1;color:var(--red);border:1px solid var(--line)}
+.secondary:hover{background:#f6e9d8}
+.choice{
+  display:block;text-align:left;background:#fffaf3;
+  border:1px solid var(--line);margin-top:9px;color:var(--ink);
+}
+.choice:hover{border-color:var(--gold);background:#f9efdf}
+.choice strong{display:block;color:var(--red)}
+.choice small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.pill{
+  display:inline-block;border-radius:30px;background:#f4e6d8;
+  color:var(--red);font-size:12px;padding:3px 10px;
+}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{
+  border-radius:11px;padding:11px;background:#faf3e9;border:1px solid #f0e5d5;
+}
+.stat-head{display:flex;justify-content:space-between;gap:5px;font-size:12px;color:var(--muted)}
+.stat-number{font-size:20px;font-weight:bold;color:var(--red)}
+.bar{height:5px;background:#e9dfd2;border-radius:10px;overflow:hidden;margin-top:6px}
+.fill{height:100%;background:var(--gold);transition:width .25s}
+.profile{display:flex;align-items:center;gap:15px}
+.avatar{
+  flex:0 0 72px;width:72px;height:82px;border-radius:50% 50% 43% 43%;
+  display:grid;place-items:center;background:#f1e0cc;font-size:43px;
+  border:2px solid #dfc398;
+}
+.profile h2{margin:0;font-size:23px}
+.profile p{margin:2px 0}
+.two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.event-icon{font-size:42px}
+.event-box{background:#fff9f0;border-radius:12px;padding:15px;border:1px solid var(--line)}
+.timeline{border-left:2px solid #dfcba9;margin:10px 0 0 5px;padding-left:15px}
+.log-item{position:relative;padding:0 0 15px;font-size:13px}
+.log-item:before{
+  content:"";position:absolute;width:8px;height:8px;border-radius:50%;
+  background:var(--gold);left:-20px;top:8px;
+}
+.log-item:last-child{padding-bottom:0}
+.relationship{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.relationship:last-child{border:0}
+.meter{font-size:12px;color:var(--muted);white-space:nowrap}
+.note{background:#f8efe1;padding:12px;border-radius:10px;font-size:13px}
+.footer{text-align:center;font-size:12px;color:var(--muted);padding:15px}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+@media(max-width:620px){
+  main{margin:13px auto;padding:0 10px 25px}
+  .card{padding:15px;border-radius:13px}
+  .two-col{grid-template-columns:1fr}
+  .profile{align-items:flex-start}
+  .avatar{flex-basis:58px;width:58px;height:68px;font-size:34px}
+  .top{padding:25px 12px 22px}
+  .top h1{letter-spacing:3px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="seal">雍正朝 · 宮廷人生模擬</div>
+  <h1>深宮浮生錄</h1>
+  <p>一入深宮，浮生如棋。每一步，都由你自己選擇。</p>
+</header>
+
+<main>
+  <!-- 開始畫面 -->
+  <section id="welcome" class="card center">
+    <div class="hero-emoji">🏮</div>
+    <span class="pill">隨機人生 · 後宮養成 · 多重結局</span>
+    <h2 style="margin-top:14px">你的深宮人生，即將開始</h2>
+    <p>雍正元年，宮門深鎖。</p>
+    <p>你的出身、性格、家族與初始位分將隨機生成。你要經營人脈、謹慎行事，在波譎雲詭的後宮中爭取皇后之位。</p>
+    <div class="note" style="text-align:left;margin:18px 0">
+      <strong>遊戲目標</strong><br>
+      努力晉升、經營關係、維持健康，等待屬於你的機會。你可以追求權力，但每個選擇都有代價。
+    </div>
+    <button class="primary" onclick="startGame()">✦ 入宮，開啟新人生</button>
+    <p class="muted">本作為架空劇情模擬。隨機角色、事件及數值不代表真實歷史。</p>
+  </section>
+
+  <!-- 遊戲主畫面 -->
+  <section id="game" class="hidden">
+    <div class="card">
+      <div class="header-row">
+        <span class="pill" id="dateTag">雍正元年正月</span>
+        <span class="muted" id="turnTag">第 1 回合</span>
+      </div>
+      <div class="profile" style="margin-top:15px">
+        <div class="avatar" id="avatar">👘</div>
+        <div>
+          <h2 id="playerName">你的名字</h2>
+          <p><strong id="rankName">答應</strong>　<span class="muted" id="ageText">年齡 16 歲</span></p>
+          <p class="muted" id="originText">出身與旗籍</p>
+          <p class="muted" id="personalityText">性格</p>
+        </div>
+      </div>
+      <hr>
+      <div class="header-row">
+        <h3>宮中局勢</h3>
+        <span class="muted" id="goalText">目標：爭取后位</span>
+      </div>
+      <div class="grid" id="stats"></div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="event-box">
+            <div class="event-icon" id="eventIcon">🌸</div>
+            <span class="pill" id="eventType">宮廷事件</span>
+            <h2 id="eventTitle" style="margin-top:8px">新的機遇</h2>
+            <p id="eventText"></p>
+          </div>
+          <div id="choices"></div>
+          <p id="feedback" class="muted" aria-live="polite"></p>
+          <button id="nextBtn" class="primary hidden" onclick="advanceTurn()">結束本月，進入下個月 →</button>
+        </div>
+
+        <div class="card">
+          <h3>📜 宮中記事</h3>
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>👑 位分與晉升</h3>
+          <p class="muted">位分越高，資源與影響力通常越大。年終時將按你的表現判定晉升機會。</p>
+          <div id="rankProgress"></div>
+        </div>
+        <div class="card">
+          <h3>🤝 宮廷關係</h3>
+          <div id="relations"></div>
+          <p class="muted" style="margin-top:10px">關係會隨事件與選擇改變。善待他人不一定沒有代價，結怨也可能帶來風險。</p>
+        </div>
+        <div class="card">
+          <h3>📖 生存提示</h3>
+          <p class="muted">• 寵愛有助晉升，但並非唯一條件。</p>
+          <p class="muted">• 聲望與家族勢力能增加你的籌碼。</p>
+          <p class="muted">• 健康過低時，可能提前結束人生。</p>
+          <p class="muted">• 每十二回合進行年終考核。</p>
+          <hr>
+          <button class="secondary" onclick="confirmRestart()">重新開始人生</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 結局畫面 -->
+  <section id="ending" class="hidden">
+    <div class="card center">
+      <div class="hero-emoji" id="endIcon">🌙</div>
+      <span class="pill">一生已成篇</span>
+      <h2 id="endTitle" style="margin-top:12px">你的結局</h2>
+      <p id="endText"></p>
+      <p id="endDetail" class="muted"></p>
+    </div>
+    <div class="card">
+      <h2>浮生回顧</h2>
+      <div class="grid" id="endStats"></div>
+    </div>
+    <div class="card">
+      <h3>📜 你的宮廷故事</h3>
+      <div class="timeline" id="endTimeline"></div>
+    </div>
+    <button class="primary" onclick="startGame()">🔄 再入深宮，重寫命運</button>
+    <p class="footer">每次開局，都是一段不同的浮生。</p>
+  </section>
+</main>
+
+<div class="footer">《深宮浮生錄》｜雍正朝架空後宮生存模擬</div>
+
+<script>
+"use strict";
+
+/* ==========================
+   一、遊戲基本資料
+   ========================== */
+
+const RANKS = [
+  {name:"答應",level:0},
+  {name:"常在",level:1},
+  {name:"貴人",level:2},
+  {name:"嬪",level:3},
+  {name:"妃",level:4},
+  {name:"貴妃",level:5},
+  {name:"皇貴妃",level:6},
+  {name:"皇后",level:7}
+];
+
+const SURNAMES = ["鈕祜祿","烏雅","佟佳","富察","瓜爾佳","赫舍里","葉赫那拉","博爾濟吉特","王","李","陳","沈","陸","蘇","林"];
+const GIVEN_NAMES = ["蘭","清婉","若蘭","明珠","雲舒","靜姝","婉寧","玉瑤","知意","月棠","芷晴","映雪","如意","安禾","令儀","舒窈","念慈","秋月"];
+const BANNERS = ["正黃旗","鑲黃旗","正白旗","鑲白旗","正紅旗","鑲紅旗","正藍旗","鑲藍旗","漢軍旗籍"];
+const FAMILIES = [
+  {name:"顯赫世家",power:76,wealth:75},
+  {name:"官宦之家",power:60,wealth:62},
+  {name:"普通旗人之家",power:43,wealth:48},
+  {name:"家道中落",power:27,wealth:30},
+  {name:"新貴之家",power:52,wealth:58}
+];
+const PERSONALITIES = [
+  {name:"端莊謹慎",stats:{reputation:9,scheme:3}},
+  {name:"聰慧機敏",stats:{scheme:12,reputation:2}},
+  {name:"溫柔和善",stats:{relationships:9,favor:2}},
+  {name:"心高氣傲",stats:{scheme:5,favor:5,relationships:-5}},
+  {name:"沉著隱忍",stats:{health:5,scheme:8}},
+  {name:"才華出眾",stats:{reputation:10,scheme:3}}
+];
+
+const MONTHS = ["正月","二月","三月","四月","五月","六月","七月","八月","九月","十月","冬月","臘月"];
+
+let game = null;
+let currentEvent = null;
+let actionTaken = false;
+let eventSequence = 0;
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function roll(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function clamp(n){ return Math.max(0,Math.min(100,Math.round(n))); }
+function yearLabel(year){ return "雍正"+(year===1?"元年":numberChinese(year)+"年"); }
+
+function numberChinese(n){
+  const digits=["零","一","二","三","四","五","六","七","八","九"];
+  if(n<10) return digits[n];
+  if(n<20) return "十"+(n%10?digits[n%10]:"");
+  if(n<100) return digits[Math.floor(n/10)]+"十"+(n%10?digits[n%10]:"");
+  return String(n);
+}
+
+/* ==========================
+   二、隨機建立玩家
+   ========================== */
+
+function startGame(){
+  const family=rand(FAMILIES);
+  const personality=rand(PERSONALITIES);
+  const initialRank=roll(0,2);
+
+  game={
+    name:rand(SURNAMES)+rand(GIVEN_NAMES),
+    banner:rand(BANNERS),
+    family:family.name,
+    personality:personality.name,
+    age:roll(15,19),
+    year:1,
+    month:1,
+    turns:0,
+    rank:initialRank,
+    health:clamp(roll(65,88)+(personality.stats.health||0)),
+    favor:clamp(roll(12,35)+(personality.stats.favor||0)),
+    reputation:clamp(roll(20,40)+(personality.stats.reputation||0)),
+    scheme:clamp(roll(25,48)+(personality.stats.scheme||0)),
+    relationships:clamp(roll(25,48)+(personality.stats.relationships||0)),
+    familyPower:family.power,
+    wealth:family.wealth,
+    emperorRelation:roll(20,40),
+    empressRelation:roll(35,60),
+    rivalRelation:roll(35,60),
+    alive:true,
+    history:[],
+    yearlyPromotions:0,
+    endingReason:""
+  };
+
+  currentEvent=null;
+  actionTaken=false;
+  eventSequence=0;
+
+  hide("welcome");
+  hide("ending");
+  show("game");
+
+  addLog("入宮",`${game.name}入宮，初封${RANKS[game.rank].name}。她出身${game.banner}，家族為${game.family}。`);
+  renderAll();
+  createEvent();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ==========================
+   三、畫面與數值
+   ========================== */
+
+function show(id){document.getElementById(id).classList.remove("hidden");}
+function hide(id){document.getElementById(id).classList.add("hidden");}
+
+function renderAll(){
+  if(!game)return;
+
+  document.getElementById("dateTag").textContent=
+    yearLabel(game.year)+MONTHS[game.month-1];
+  document.getElementById("turnTag").textContent="第 "+(game.turns+1)+" 回合";
+  document.getElementById("playerName").textContent=game.name;
+  document.getElementById("rankName").textContent=RANKS[game.rank].name;
+  document.getElementById("ageText").textContent="年齡 "+game.age+" 歲";
+  document.getElementById("originText").textContent=
+    game.banner+" · "+game.family;
+  document.getElementById("personalityText").textContent=
+    "性格："+game.personality;
+  document.getElementById("goalText").textContent=
+    game.rank===7?"目標：已登后位":"目標：爭取皇后之位";
+
+  const stats=[
+    ["❤️","健康","health"],
+    ["🌹","皇帝寵愛","favor"],
+    ["🪞","宮廷聲望","reputation"],
+    ["🧠","心計","scheme"],
+    ["🤝","人脈關係","relationships"],
+    ["🏯","家族勢力","familyPower"]
+  ];
+  document.getElementById("stats").innerHTML=stats.map(([icon,label,key])=>`
+    <div class="stat">
+      <div class="stat-head"><span>${icon} ${label}</span></div>
+      <div class="stat-number">${game[key]}<span style="font-size:11px;font-weight:normal"> / 100</span></div>
+      <div class="bar"><div class="fill" style="width:${game[key]}%"></div></div>
+    </div>
+  `).join("");
+
+  renderRankProgress();
+  renderRelations();
+  renderTimeline("timeline",game.history.slice(-8).reverse());
+}
+
+function renderRankProgress(){
+  const rank=RANKS[game.rank];
+  const next=RANKS[game.rank+1];
+  const el=document.getElementById("rankProgress");
+
+  if(!next){
+    el.innerHTML=`<div class="note">🎉 你已登上皇后之位！接下來要鞏固地位，並面對更多責任與挑戰。</div>`;
+    return;
+  }
+
+  const score=Math.round((game.favor+game.reputation+game.scheme+game.familyPower)/4);
+  el.innerHTML=`
+    <div class="header-row"><strong>${rank.name}</strong><span class="gold">→ ${next.name}</span></div>
+    <div class="bar" style="height:8px;margin:12px 0">
+      <div class="fill" style="width:${score}%;height:8px"></div>
+    </div>
+    <p class="muted">綜合影響力：${score}/100</p>
+    <p class="muted">年終考核會考慮寵愛、聲望、心計、家族勢力及當前局勢。數值高不代表必定晉升。</p>
+    ${game.rank>=5?'<p class="muted">高位嬪妃的晉升更加困難，且會受到宮中局勢影響。</p>':""}
+  `;
+}
+
+function renderRelations(){
+  const items=[
+    ["皇帝","emperorRelation"],
+    ["皇后","empressRelation"],
+    ["主要對手","rivalRelation"]
+  ];
+  document.getElementById("relations").innerHTML=items.map(([name,key])=>{
+    let value=game[key];
+    let desc=value>=70?"親近":value>=45?"尚可":value>=25?"疏遠":"緊張";
+    return `<div class="relationship">
+      <span>${name} · ${desc}</span>
+      <span class="meter">${value}/100</span>
+    </div>`;
+  }).join("");
+}
+
+function renderTimeline(id,items){
+  const el=document.getElementById(id);
+  if(!items.length){
+    el.innerHTML='<p class="muted">尚未有記事。</p>';
+    return;
+  }
+  el.innerHTML=items.map(item=>`
+    <div class="log-item">
+      <strong>${item.date} · ${item.title}</strong><br>
+      ${item.text}
+    </div>
+  `).join("");
+}
+
+function addLog(title,text){
+  const date=yearLabel(game.year)+MONTHS[game.month-1];
+  game.history.push({date,title,text});
+}
+
+/* ==========================
+   四、事件資料與生成
+   ========================== */
+
+const EVENT_BANK=[
+  {
+    type:"日常",icon:"🌸",title:"初春請安",
+    minRank:0,
+    text:"晨起請安時，眾人言笑有度。皇后留意到你的舉止，身旁幾位嬪妃也在觀察你。",
+    choices:[
+      {title:"恭謹行禮，謹守規矩",desc:"以穩妥的表現建立聲望",effect:{reputation:7,empressRelation:5,health:0}},
+      {title:"主動與眾人攀談",desc:"試著拓展宮中人脈",effect:{relationships:8,rivalRelation:3}},
+      {title:"留心觀察眾人神色",desc:"暗中了解宮中局勢",effect:{scheme:7,reputation:1}}
+    ]
+  },
+  {
+    type:"恩寵",icon:"🪭",title:"御前傳召",
+    minRank:0,
+    text:"太監傳話，皇帝今日心情不錯。你可能有機會獲得召見，但也有人正等著看你的表現。",
+    choices:[
+      {title:"精心準備，從容赴見",desc:"爭取皇帝好感",effect:{favor:9,emperorRelation:8,health:-2}},
+      {title:"保持平常心，不刻意爭寵",desc:"穩住聲望與自我",effect:{reputation:5,health:3}},
+      {title:"請教年長嬪妃禮儀",desc:"降低失儀風險",effect:{relationships:5,reputation:4}}
+    ]
+  },
+  {
+    type:"人際",icon:"🍵",title:"一席茶敘",
+    minRank:0,
+    text:"一位嬪妃邀你到她宮中品茶。她言語親切，卻不經意地打聽你的家世與近來的恩寵。",
+    choices:[
+      {title:"坦誠交流，釋出善意",desc:"建立互信，但也透露一些消息",effect:{relationships:9,rivalRelation:5,scheme:-1}},
+      {title:"言辭得體，點到即止",desc:"不失禮，也不輕易透露底細",effect:{reputation:5,scheme:4}},
+      {title:"婉拒邀約，避免牽扯",desc:"減少風險，但錯過結交機會",effect:{health:3,relationships:-3}}
+    ]
+  },
+  {
+    type:"風波",icon:"🕯️",title:"宮中流言",
+    minRank:0,
+    text:"宮中傳出一則不利於某位嬪妃的流言。有人暗示你可以藉此表態，然而真相尚未明朗。",
+    choices:[
+      {title:"不作評論，靜觀其變",desc:"避免被捲入風波",effect:{reputation:3,scheme:4}},
+      {title:"私下查明消息來源",desc:"冒著風險尋找真相",effect:{scheme:8,health:-3}},
+      {title:"提醒對方謹慎言行",desc:"可能化解矛盾，也可能得罪人",effect:{relationships:4,reputation:2,rivalRelation:-5}}
+    ]
+  },
+  {
+    type:"家族",icon:"📜",title:"家書入宮",
+    minRank:0,
+    text:"家中送來書信，提及近來家族事務繁忙。你既掛念親人，也明白宮中的每一步都與家族聲望相連。",
+    choices:[
+      {title:"請家人謹守本分",desc:"降低家族捲入朝局的風險",effect:{familyPower:2,reputation:5}},
+      {title:"請家人尋求可靠人脈",desc:"嘗試增加家族支持",effect:{familyPower:8,scheme:2}},
+      {title:"將心思放回宮中",desc:"避免家事分心",effect:{favor:3,health:2,relationships:-2}}
+    ]
+  },
+  {
+    type:"才藝",icon:"🎼",title:"宮中雅集",
+    minRank:0,
+    text:"宮中舉行雅集，眾人各展才藝。你可以選擇展示所長，也可以低調度過這一日。",
+    choices:[
+      {title:"展示才藝",desc:"以能力換取賞識",effect:{reputation:8,favor:4}},
+      {title:"協助安排雅集",desc:"以周全細心贏得信任",effect:{empressRelation:6,relationships:4}},
+      {title:"低調旁觀",desc:"不搶風頭，觀察各方反應",effect:{scheme:5,health:2}}
+    ]
+  },
+  {
+    type:"健康",icon:"🌿",title:"身子不適",
+    minRank:0,
+    text:"連日操勞後，你感到精神不濟。宮中事務仍在眼前，但若不及時休養，恐怕難以應付往後的風波。",
+    choices:[
+      {title:"請太醫診看，安心休養",desc:"恢復健康，但本月少些活動",effect:{health:13,favor:-2}},
+      {title:"照常處理宮中事務",desc:"維持存在感，身體負擔增加",effect:{reputation:3,health:-7}},
+      {title:"調整作息，從容應對",desc:"兼顧身體與日常",effect:{health:6,scheme:2}}
+    ]
+  },
+  {
+    type:"賞賜",icon:"🎁",title:"意外賞賜",
+    minRank:1,
+    text:"內務府送來一份賞賜，宮中眾人都在猜測這份恩典背後是否另有深意。",
+    choices:[
+      {title:"恭敬謝恩",desc:"穩妥地接受皇恩",effect:{favor:6,reputation:3,emperorRelation:3}},
+      {title:"將部分賞物分贈宮人",desc:"收買人心，建立口碑",effect:{relationships:8,reputation:3}},
+      {title:"低調收下，不作張揚",desc:"減少引人注目",effect:{scheme:4,health:2}}
+    ]
+  },
+  {
+    type:"考驗",icon:"⚖️",title:"規矩與人情",
+    minRank:1,
+    text:"一名宮人犯了小錯，處置是否合宜，正考驗著你的判斷。過於嚴厲會失人心，過於寬縱也可能被認為失職。",
+    choices:[
+      {title:"依規矩處置",desc:"維持秩序與聲望",effect:{reputation:6,relationships:-2}},
+      {title:"了解原委後從寬處理",desc:"兼顧人情與分寸",effect:{relationships:6,reputation:2,scheme:2}},
+      {title:"交由主管宮人處理",desc:"避免親自介入",effect:{health:2,scheme:1}}
+    ]
+  },
+  {
+    type:"盟友",icon:"🪷",title:"一份善意",
+    minRank:0,
+    text:"一位平日少有往來的嬪妃，悄悄送來一份小禮。這份善意或許是真心，也可能是一場試探。",
+    choices:[
+      {title:"回贈薄禮，建立往來",desc:"擴展盟友網絡",effect:{relationships:9,rivalRelation:4}},
+      {title:"收下心意，暫不表態",desc:"保持彈性，繼續觀察",effect:{scheme:5,relationships:2}},
+      {title:"婉言謝絕",desc:"避免人情牽絆",effect:{reputation:2,relationships:-4}}
+    ]
+  }
+];
+
+function createEvent(){
+  if(!game.alive)return;
+  actionTaken=false;
+  document.getElementById("nextBtn").classList.add("hidden");
+  document.getElementById("feedback").textContent="請選擇一項行動。每回合只能作出一次選擇。";
+
+  let event;
+  const annual=game.month===12;
+  const specialChance=Math.random();
+
+  if(annual){
+    event={
+      type:"年終",icon:"🏮",title:"年終宮宴與考核",
+      text:"歲末宮宴將至，皇帝與皇后會留意各宮一年的表現。你的聲望、恩寵、人脈與家族勢力，都可能影響來年的處境。",
+      choices:[
+        {title:"精心準備宮宴",desc:"爭取好印象，但會耗費心力",effect:{reputation:7,favor:4,health:-2}},
+        {title:"協助安排宮中事務",desc:"以周全與可靠贏得信任",effect:{empressRelation:6,reputation:5,relationships:3}},
+        {title:"保持低調，觀察局勢",desc:"避免出錯，暗中盤算",effect:{scheme:6,health:3}}
+      ],
+      annual:true
+    };
+  }else if(specialChance<0.15){
+    event={
+      type:"突發",icon:"🌧️",title:"突如其來的風波",
+      text:"宮中忽然傳來一個令人不安的消息，各宮人心浮動。你必須決定如何保護自己，並判斷是否值得介入。",
+      choices:[
+        {title:"先保全自己，暫不表態",desc:"降低直接捲入的風險",effect:{health:3,scheme:4}},
+        {title:"暗中打聽消息",desc:"可能得到情報，也可能惹人注意",effect:{scheme:8,health:-4,rivalRelation:-3}},
+        {title:"主動安撫身邊宮人",desc:"穩定人心，建立信任",effect:{relationships:7,reputation:3}}
+      ]
+    };
+  }else{
+    const eligible=EVENT_BANK.filter(e=>game.rank>=e.minRank);
+    event=rand(eligible);
+  }
+
+  currentEvent=event;
+  eventSequence++;
+
+  document.getElementById("eventIcon").textContent=event.icon;
+  document.getElementById("eventType").textContent=event.type;
+  document.getElementById("eventTitle").textContent=event.title;
+  document.getElementById("eventText").textContent=event.text;
+
+  const choicesEl=document.getElementById("choices");
+  choicesEl.innerHTML="";
+  event.choices.forEach((choice,index)=>{
+    const btn=document.createElement("button");
+    btn.className="choice";
+    const title=document.createElement("strong");
+    title.textContent=(index+1)+". "+choice.title;
+    const desc=document.createElement("small");
+    desc.textContent=choice.desc;
+    btn.append(title,desc);
+    btn.addEventListener("click",()=>chooseEvent(index));
+    choicesEl.appendChild(btn);
+  });
+}
+
+/* ==========================
+   五、玩家選擇與關係變化
+   ========================== */
+
+function chooseEvent(index){
+  if(actionTaken||!currentEvent)return;
+  actionTaken=true;
+
+  const choice=currentEvent.choices[index];
+  const effects=choice.effect||{};
+
+  for(const [key,value] of Object.entries(effects)){
+    if(Object.prototype.hasOwnProperty.call(game,key)){
+      game[key]=clamp(game[key]+value);
+    }
+  }
+
+  // 屬性帶來小幅度的隨機結果，增加重玩變化。
+  const rollChance=Math.random();
+  if(rollChance<0.16){
+    game.reputation=clamp(game.reputation+2);
+    document.getElementById("feedback").textContent=
+      "你的應對得到了一些好評。聲望 +2。";
+  }else if(rollChance>0.88){
+    game.health=clamp(game.health-2);
+    document.getElementById("feedback").textContent=
+      "事情比預期更耗心力。健康 -2。";
+  }else{
+    document.getElementById("feedback").textContent=
+      "你選擇了「"+choice.title+"」。影響已記錄，局勢仍在變化。";
+  }
+
+  const summary=Object.entries(effects)
+    .filter(([key,value])=>value!==0)
+    .map(([key,value])=>statName(key)+(value>0?" +":" ")+value)
+    .join("、");
+
+  addLog(currentEvent.title,`你選擇「${choice.title}」。${summary? "數值變化："+summary+"。":""}`);
+
+  // 年終考核只在本回合結束時觸發。
+  document.querySelectorAll("#choices button").forEach(btn=>btn.disabled=true);
+  document.getElementById("nextBtn").classList.remove("hidden");
+  renderAll();
+}
+
+function statName(key){
+  const names={
+    health:"健康",favor:"寵愛",reputation:"聲望",scheme:"心計",
+    relationships:"人脈",familyPower:"家族勢力",
+    emperorRelation:"皇帝關係",empressRelation:"皇后關係",
+    rivalRelation:"對手關係",wealth:"家族資源"
+  };
+  return names[key]||key;
+}
+
+/* ==========================
+   六、時間推進與年終晉升
+   ========================== */
+
+function advanceTurn(){
+  if(!actionTaken)return;
+
+  game.turns++;
+  
+  // 每月生活帶來的輕微消耗。
+  if(Math.random()<0.3)game.health=clamp(game.health-1);
+
+  // 偶爾得到額外的善意或遇到小挫折。
+  if(Math.random()<0.20){
+    const bonus=rand([
+      {text:"宮人對你的辦事能力有所稱許。",key:"reputation",value:2},
+      {text:"一位舊識暗中給了你一些支持。",key:"relationships",value:3},
+      {text:"你終於有時間好好休息。",key:"health",value:3},
+      {text:"你從旁人的談話中學到一些門道。",key:"scheme",value:2},
+      {text:"皇帝偶然想起你的名字。",key:"favor",value:2}
+    ]);
+    game[bonus.key]=clamp(game[bonus.key]+bonus.value);
+    addLog("偶發小事",bonus.text);
+  }
+
+  if(game.month===12){
+  game.age++;
+  annualReview();
+  if(!game.alive)return;
+}
+  }
+
+  if(game.health<=0){
+    endGame("health");
+    return;
+  }
+
+  if(game.rank===7 && game.year>=3){
+    if(Math.random()<0.10){
+      endGame("empress");
+      return;
+    }
+  }
+
+  if(game.year>=40 || game.age>=65){
+    endGame("oldAge");
+    return;
+  }
+
+  if(game.month===12){
+    game.month=1;
+    game.year++;
+  }else{
+    game.month++;
+  }
+
+  renderAll();
+  createEvent();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function annualReview(){
+  addLog("年終考核","宮中檢視各宮一年的表現。");
+  const score=game.favor*0.24+game.reputation*0.22+
+    game.scheme*0.16+game.familyPower*0.20+
+    game.relationships*0.18;
+
+  // 後位仍有人時，不會直接自動晉升皇后。
+  const canTryQueen=game.rank===6 && score>=78 &&
+    game.empressRelation>=35 && game.favor>=60;
+
+  if(canTryQueen && Math.random()<0.24){
+    game.rank=7;
+    game.favor=clamp(game.favor+8);
+    game.reputation=clamp(game.reputation+10);
+    addLog("冊立皇后","在架空劇情中，宮廷局勢出現重大轉變，你獲冊立為皇后。");
+    return;
+  }
+
+  if(game.rank<6){
+    let chance=0.05+(score/100)*0.24;
+    if(game.favor<20)chance-=0.05;
+    if(game.reputation<20)chance-=0.03;
+    if(game.empressRelation<20)chance-=0.04;
+    chance=Math.max(0.02,Math.min(0.30,chance));
+
+    if(Math.random()<chance){
+      game.rank++;
+      game.reputation=clamp(game.reputation+5);
+      game.favor=clamp(game.favor+3);
+      game.yearlyPromotions++;
+      addLog("晉升位分",`你因一年的表現獲得晉升，位分升至${RANKS[game.rank].name}。`);
+    }else{
+      addLog("考核結果","今年未有晉升。你仍有機會在來年改變局勢。");
+    }
+  }else if(game.rank===6){
+    addLog("后位之爭","你已位居高位，但距離后位仍有一段路。你需要更穩固的聲望、寵愛與人脈。");
+  }
+
+  // 宮廷關係會隨年月稍有變化。
+  game.empressRelation=clamp(game.empressRelation+roll(-3,2));
+  game.rivalRelation=clamp(game.rivalRelation+roll(-3,2));
+
+  if(game.favor>75 && game.rivalRelation<30){
+    game.reputation=clamp(game.reputation-2);
+    addLog("暗中議論","你的恩寵引來一些妒意，宮中流言略有增加。");
+  }
+
+  renderAll();
+}
+
+/* ==========================
+   七、遊戲結局
+   ========================== */
+
+function endGame(reason){
+  game.alive=false;
+  hide("game");
+  show("ending");
+
+  let icon,title,text,detail;
+  if(reason==="empress"){
+    icon="👑";
+    title="鳳儀天下";
+    text=`你以${RANKS[game.rank].name}之位走過重重風波，最終成為後宮之主。`;
+    detail="權力帶來榮耀，也帶來責任。你的一生將成為宮中傳說。";
+  }else if(reason==="health"){
+    icon="🕯️";
+    title="深宮夢斷";
+    text="長年的勞累與宮廷壓力終究壓垮了你。";
+    detail=`你在${yearLabel(game.year)}、${MONTHS[game.month-1]}結束了這段人生。你的故事仍留在宮中記事裡。`;
+  }else{
+    icon="🌙";
+    title=game.rank>=5?"榮養深宮":"平安浮生";
+    text=`你以${RANKS[game.rank].name}之位走過多年宮廷歲月。`;
+    detail="你未必得到所有想要的東西，但已在自己的時代留下痕跡。";
+  }
+
+  document.getElementById("endIcon").textContent=icon;
+  document.getElementById("endTitle").textContent=title;
+  document.getElementById("endText").textContent=text;
+  document.getElementById("endDetail").textContent=detail;
+
+  const stats=[
+    ["最終位分",RANKS[game.rank].name],
+    ["人生年齡",game.age+" 歲"],
+    ["皇帝寵愛",game.favor+"/100"],
+    ["宮廷聲望",game.reputation+"/100"],
+    ["心計",game.scheme+"/100"],
+    ["家族勢力",game.familyPower+"/100"],
+    ["晉升次數",game.yearlyPromotions+" 次"],
+    ["經歷回合",game.turns+" 個月"]
+  ];
+  document.getElementById("endStats").innerHTML=stats.map(([label,value])=>`
+    <div class="stat">
+      <div class="stat-head">${label}</div>
+      <div class="stat-number" style="font-size:17px">${value}</div>
+    </div>
+  `).join("");
+
+  renderTimeline("endTimeline",game.history.slice().reverse());
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function confirmRestart(){
+  if(confirm("確定重新開始嗎？目前這段人生的進度將會結束。")){
+    startGame();
+  }
+}
+
+/* 頁面初始化時只顯示開始畫面。 */
+</script>
+</body>
+</html>
