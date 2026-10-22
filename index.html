@@ -72,10 +72,17 @@ button:disabled{opacity:.45;cursor:not-allowed}
   color:var(--red);font-size:12px;padding:3px 10px;
 }
 .header-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .stat{
-  border-radius:11px;padding:11px;background:#faf3e9;border:1px solid #f0e5d5;
+  border-radius:9px;padding:7px 9px;background:#faf3e9;border:1px solid #f0e5d5;
 }
+#stats .stat-head{font-size:11px;line-height:1.35}
+#stats .stat-number{font-size:17px;line-height:1.35}
+#stats .bar{height:4px;margin-top:4px}
+#stats .stat-number span{font-size:10px!important}
+#game > .card:first-child{padding:14px 16px}
+#game > .card:first-child .profile{margin-top:9px!important;gap:11px}
+#game > .card:first-child hr{margin:10px 0}
 .stat-head{display:flex;justify-content:space-between;gap:5px;font-size:12px;color:var(--muted)}
 .stat-number{font-size:20px;font-weight:bold;color:var(--red)}
 .bar{height:5px;background:#e9dfd2;border-radius:10px;overflow:hidden;margin-top:6px}
@@ -108,6 +115,10 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
   main{margin:13px auto;padding:0 10px 25px}
   .card{padding:15px;border-radius:13px}
   .two-col{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  #stats .stat{padding:6px 7px}
+  #stats .stat-head{font-size:10px}
+  #stats .stat-number{font-size:16px}
   .profile{align-items:flex-start}
   .avatar{flex-basis:58px;width:58px;height:68px;font-size:34px}
   .top{padding:25px 12px 22px}
@@ -709,10 +720,15 @@ function chooseEvent(index){
 
   addLog(currentEvent.title,`你選擇「${choice.title}」。${summary? "數值變化："+summary+"。":""}`);
 
-  // 年終考核只在本回合結束時觸發。
+  // 選擇後自動結束本月；稍作停留，讓玩家看清回饋，再推進時間。
   document.querySelectorAll("#choices button").forEach(btn=>btn.disabled=true);
-  document.getElementById("nextBtn").classList.remove("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
   renderAll();
+  const feedback=document.getElementById("feedback");
+  feedback.textContent += "　正在進入下個月……";
+  window.setTimeout(()=>{
+    if(game && game.alive && actionTaken) advanceTurn();
+  }, 1100);
 }
 
 function statName(key){
